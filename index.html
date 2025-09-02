@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Unlearning Papers</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            transition: background 0.3s;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            transition: background 0.3s, color 0.3s;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            font-size: 2.2em;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .filters {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(45deg, #764ba2, #667eea);
+            transform: scale(1.05);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        th {
+            padding: 15px 10px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9em;
+            border-bottom: 3px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            position: relative;
+            user-select: none;
+            transition: all 0.3s ease;
+        }
+
+        th:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.02);
+        }
+
+        .sort-arrow {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8em;
+            opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+
+        th.sort-asc .sort-arrow:after {
+            content: "↑";
+            opacity: 1;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        th.sort-desc .sort-arrow:after {
+            content: "↓";
+            opacity: 1;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        th:not(.sort-asc):not(.sort-desc) .sort-arrow:after {
+            content: "↕";
+        }
+
+        th.sort-asc,
+        th.sort-desc {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #eee;
+            font-size: 0.85em;
+            line-height: 1.4;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        tbody tr:hover {
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            transform: scale(1.01);
+            transition: all 0.2s ease;
+        }
+
+        .year {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 1.1em;
+        }
+
+        .venue {
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            text-align: center;
+            color: white;
+        }
+
+        .neurips {
+            background: #e74c3c;
+        }
+
+        .icml {
+            background: #3498db;
+        }
+
+        .cvpr {
+            background: #2ecc71;
+        }
+
+        .iclr {
+            background: #f39c12;
+        }
+
+        .ieee {
+            background: #9b59b6;
+        }
+
+        .eccv {
+            background: #1abc9c;
+        }
+
+        .aistats {
+            background: #34495e;
+        }
+
+        .tifs {
+            background: #8e44ad;
+        }
+        .iccv {
+            background: #bf3058;
+        }
+
+        .citations {
+            font-weight: 600;
+            color: #e74c3c;
+        }
+
+        .technique {
+            font-style: italic;
+            color: #2c3e50;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 2px 6px;
+            border-radius: 8px;
+        }
+
+        .yes {
+            background: #2ecc71;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .no {
+            background: #e74c3c;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .link {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+            color: #2980b9;
+        }
+
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #2c3e50;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .export-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            background: linear-gradient(45deg, #2ecc71, #27ae60);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.4);
+        }
+
+        /* --- DARK MODE --- */
+        body.dark-mode {
+            background: linear-gradient(135deg, #232526 0%, #414345 100%);
+        }
+
+        .container.dark-mode {
+            background: rgba(34, 34, 34, 0.98);
+            color: #e0e0e0;
+        }
+
+        .container.dark-mode h1 {
+            background: linear-gradient(45deg, #e0e0e0, #a3a3a3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .container.dark-mode .stat-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05), rgba(118, 75, 162, 0.05));
+            border: 2px solid rgba(102, 126, 234, 0.08);
+        }
+
+        .container.dark-mode .stat-number {
+            color: #a3a3a3;
+        }
+
+        .container.dark-mode .stat-label {
+            color: #e0e0e0;
+        }
+
+        .container.dark-mode .filter-btn {
+            background: linear-gradient(45deg, #232526, #414345);
+            color: #e0e0e0;
+        }
+
+        .container.dark-mode .filter-btn.active {
+            background: linear-gradient(45deg, #414345, #232526);
+        }
+
+        .container.dark-mode .table-container {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .container.dark-mode table {
+            background: #232526;
+            color: #e0e0e0;
+        }
+
+        .container.dark-mode thead {
+            background: linear-gradient(135deg, #232526, #414345);
+            color: #e0e0e0;
+        }
+
+        .container.dark-mode th {
+            border-bottom: 3px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .container.dark-mode th.sort-asc,
+        .container.dark-mode th.sort-desc {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .container.dark-mode td {
+            border-bottom: 1px solid #444;
+        }
+
+        .container.dark-mode tbody tr:hover {
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
+        }
+
+        .container.dark-mode .year {
+            color: #a3a3a3;
+        }
+
+        .container.dark-mode .technique {
+            color: #e0e0e0;
+            background: rgba(102, 126, 234, 0.08);
+        }
+
+        .container.dark-mode .link {
+            color: #81c7f5;
+        }
+
+        .container.dark-mode .link:hover {
+            color: #3498db;
+        }
+
+        .container.dark-mode .export-btn {
+            background: linear-gradient(45deg, #414345, #232526);
+            color: #e0e0e0;
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.1);
+        }
+
+        .container.dark-mode .export-btn:hover {
+            box-shadow: 0 8px 25px rgba(46, 204, 113, 0.2);
+        }
+
+        .container.dark-mode .yes {
+            background: #007531;
+            text-align: center;
+        }
+        .container.dark-mode .no {
+            background: #751f00;
+            text-align: center;
+        }
+        .container.dark-mode .citations {
+            font-weight: 600;
+            color: #29bbff;
+        }
+        .container.dark-mode .link {
+            color: #6dbdf2;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        
+        .container.container.dark-mode .neurips {
+            background: #ec8479;
+            color: #000;
+        }
+
+        .container.container.dark-mode .icml {
+            background: #71a5c8;
+            color: #000;
+            font-weight: 600;
+        }
+
+        .container.container.dark-mode .cvpr {
+            background: #8cd6ab;
+            color: #000;
+            font-weight: 600;
+        }
+
+        .container.container.dark-mode .iclr {
+            background: #e7bd7a;
+            color: #000;
+            font-weight: 600;
+        }
+
+        .container.container.dark-mode .ieee {
+            background: #b97bd1;
+            color: #000;
+            font-weight: 600;
+        }
+
+        .container.container.dark-mode .eccv {
+            background: #77d0bf;
+            color: #000;
+            font-weight: 600;
+        }
+
+        .container.container.dark-mode .aistats {
+            background: #82b0de;
+            color: #000;
+            font-weight: 600;
+        }
+
+        .container.container.dark-mode .tifs {
+            background: #ac7ac1;
+            color: #000;
+            font-weight: 600;
+        }
+        .container.container.dark-mode .iccv {
+            background: #c17a8e;
+            color: #000;
+            font-weight: 600;
+        }
+    </style>
+    <script>
+        // Dark mode toggle logic
+        function setDarkMode(on) {
+            document.body.classList.toggle('dark-mode', on);
+            document.querySelector('.container').classList.toggle('dark-mode', on);
+        }
+        // Try to respect system preference
+        function detectDarkMode() {
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                setDarkMode(true);
+            }
+        }
+        // Add toggle button
+        window.addEventListener('DOMContentLoaded', function () {
+            detectDarkMode();
+            const btn = document.createElement('button');
+            btn.textContent = '🌙';
+            btn.title = 'Toggle dark mode';
+            btn.style.position = 'fixed';
+            btn.style.top = '20px';
+            btn.style.left = '20px';
+            btn.style.zIndex = '9999';
+            btn.style.padding = '10px 12px';
+            btn.style.borderRadius = '50%';
+            btn.style.border = 'none';
+            btn.style.background = 'linear-gradient(45deg, #667eea, #764ba2)';
+            btn.style.color = 'white';
+            btn.style.fontSize = '1.2em';
+            btn.style.cursor = 'pointer';
+            btn.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+            btn.style.transition = 'all 0.3s';
+            btn.addEventListener('mouseenter', () => btn.style.transform = 'scale(1.1)');
+            btn.addEventListener('mouseleave', () => btn.style.transform = 'scale(1)');
+            btn.onclick = function () {
+                const isDark = document.body.classList.contains('dark-mode');
+                setDarkMode(!isDark);
+                btn.textContent = isDark ? '🌙' : '☀️';
+            };
+            document.body.appendChild(btn);
+        });
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Machine Unlearning in CNNs: Groundbreaking Papers (2015-2025)</h1>
+
+        <div class="summary-stats" id="summaryStats">
+            <div class="stat-card">
+                <div class="stat-number" id="totalPapers">0</div>
+                <div class="stat-label">Total Papers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="withDataPapers">0</div>
+                <div class="stat-label">With Data</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="dataFreePapers">0</div>
+                <div class="stat-label">Data-Free</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="yearRange">-</div>
+                <div class="stat-label">Year Range</div>
+            </div>
+        </div>
+
+        <div class="filters">
+            <button class="filter-btn active" onclick="filterTable('all')">All Papers</button>
+            <button class="filter-btn" onclick="filterTable('with-data')">With Data</button>
+            <button class="filter-btn" onclick="filterTable('data-free')">Data-Free</button>
+            <button class="filter-btn" onclick="filterTable('neurips')">NeurIPS</button>
+            <button class="filter-btn" onclick="filterTable('icml')">ICML</button>
+            <button class="filter-btn" onclick="filterTable('cvpr')">CVPR</button>
+        </div>
+
+        <button class="export-btn" onclick="exportToCSV()">Export to CSV</button>
+
+        <div class="table-container">
+            <table id="papersTable">
+    <thead>
+        <tr>
+            <th onclick="sortTable(0, 'number')" data-sort="none">
+                MyRank <span class="sort-arrow"></span>
+            </th>
+            <th onclick="sortTable(1, 'number')" data-sort="none">
+                Year <span class="sort-arrow"></span>
+            </th>
+            <th onclick="sortTable(2, 'text')" data-sort="none">
+                Venue <span class="sort-arrow"></span>
+            </th>
+            <th onclick="sortTable(3, 'text')" data-sort="none">
+                Title <span class="sort-arrow"></span>
+            </th>
+            <th onclick="sortTable(4, 'text')" data-sort="none">
+                Authors <span class="sort-arrow"></span>
+            </th>
+            <th onclick="sortTable(5, 'number')" data-sort="none">
+                Citations <span class="sort-arrow"></span>
+            </th>
+            <th onclick="sortTable(6, 'text')" data-sort="none">
+                Main Technique <span class="sort-arrow"></span>
+            </th>
+            <th onclick="sortTable(7, 'text')" data-sort="none">
+                Key Insight <span class="sort-arrow"></span>
+            </th>
+            <th onclick="sortTable(8, 'text')" data-sort="none">
+                With Data <span class="sort-arrow"></span>
+            </th>
+            <th onclick="sortTable(9, 'text')" data-sort="none">
+                Without Data <span class="sort-arrow"></span>
+            </th>
+            <th onclick="sortTable(10, 'text')" data-sort="none">
+                Link <span class="sort-arrow"></span>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr data-category="with-data neurips foundational">
+            <td>1</td>
+            <td class="year">2015</td>
+            <td><span class="venue ieee">IEEE</span></td>
+            <td><strong>Towards Making Systems Forget with Machine Unlearning</strong></td>
+            <td>Cao & Yang</td>
+            <td class="citations">960+</td>
+            <td class="technique">Retraining-based</td>
+            <td>First formal definition of machine unlearning problem</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://ieeexplore.ieee.org/document/7163042" class="link">IEEE</a>
+            </td>
+        </tr>
+
+        <tr data-category="with-data neurips scalable">
+            <td>2</td>
+            <td class="year">2019</td>
+            <td><span class="venue neurips">NeurIPS</span></td>
+            <td><strong>Making AI Forget You: Data Deletion in Machine Learning</strong></td>
+            <td>Ginart et al.</td>
+            <td class="citations">610+</td>
+            <td class="technique">Sharded Learning</td>
+            <td>First scalable algorithm for data deletion in ML pipelines</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://arxiv.org/abs/1907.05012" class="link">ArXiv</a></td>
+        </tr>
+
+        <tr data-category="with-data ieee partition">
+            <td>3</td>
+            <td class="year">2020</td>
+            <td><span class="venue ieee">IEEE</span></td>
+            <td><strong>Machine Unlearning (SISA)</strong></td>
+            <td>Bourtoule et al.</td>
+            <td class="citations">1286+</td>
+            <td class="technique">SISA Training</td>
+            <td>Most cited baseline; partition-retrain strategy</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://arxiv.org/abs/1912.03817" class="link">ArXiv</a></td>
+        </tr>
+
+        <tr data-category="with-data icml certified">
+            <td>4</td>
+            <td class="year">2020</td>
+            <td><span class="venue icml">ICML</span></td>
+            <td><strong>Certified Data Removal from Machine Learning Models</strong></td>
+            <td>Ginart et al.</td>
+            <td class="citations">619+</td>
+            <td class="technique">Certified Removal</td>
+            <td>First certified removal guarantees for linear models</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://arxiv.org/abs/1911.03030" class="link">ArXiv</a></td>
+        </tr>
+
+
+
+        <tr data-category="with-data cvpr cnn">
+            <td>5</td>
+            <td class="year">2020</td>
+            <td><span class="venue cvpr">CVPR</span></td>
+            <td><strong>External Sunshine of the Spotless Net: Selective Forgetting in Deep Networks</strong></td>
+            <td>Golatkar et al.</td>
+            <td class="citations">652+</td>
+            <td class="technique">Fisher Information</td>
+            <td>Selective class forgetting in CNNs, benchmark reference work</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://arxiv.org/abs/1911.04933" class="link">ArXiv</a></td>
+        </tr>
+
+        <tr data-category="data-free eccv blackbox">
+            <td>999</td>
+            <td class="year">2020</td>
+            <td><span class="venue eccv">ECCV</span></td>
+            <td><strong>Forgetting Outside the Box: Scrubbing Deep Networks of Information Accessible from
+                    Input-Output Observations</strong></td>
+            <td>Golatkar et al.</td>
+            <td class="citations">251+</td>
+            <td class="technique">Black-box Access</td>
+            <td>Forgetting from black-box model access — practical relevance</td>
+            <td class="no">No</td>
+            <td class="yes">Yes</td>
+            <td><a href="https://arxiv.org/abs/2003.02960" class="link">ArXiv</a></td>
+        </tr>
+
+        <tr data-category="with-data ieee gradient">
+            <td>6</td>
+            <td class="year">2021</td>
+            <td><span class="venue ieee">IEEE</span></td>
+            <td><strong>Code Machine Unlearning</strong></td>
+            <td>Nasser et al.</td>
+            <td class="citations">56+</td>
+            <td class="technique">Coded learning</td>
+            <td>utilize linear encoders; perfect unlearning criterion</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://ieeexplore.ieee.org/abstract/document/9458237" class="link">IEEE</a></td>
+        </tr>
+
+        <tr data-category="with-data ieee partition">
+            <td>999</td>
+            <td class="year">2020</td>
+            <td><span class="venue ieee">IEEE</span></td>
+            <td><strong>Learn to Forget: Machine Unlearning via Neuron Masking</strong></td>
+            <td>Zhuo et al.</td>
+            <td class="citations">84+</td>
+            <td class="technique">Forsaken</td>
+            <td></td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://ieeexplore.ieee.org/abstract/document/9844865" class="link">IEEE</a></td>
+        </tr>
+
+        <tr data-category="with-data icml gradient">
+            <td>999</td>
+            <td class="year">2021</td>
+            <td><span class="venue icml">ICML</span></td>
+            <td><strong>Descent-to-Delete: Gradient-Based Methods for Machine Unlearning</strong></td>
+            <td>Neel et al.</td>
+            <td class="citations">352+</td>
+            <td class="technique">Gradient Ascent</td>
+            <td>First gradient-based unlearning method, important for scalability</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://arxiv.org/abs/2007.02923" class="link">ArXiv</a></td>
+        </tr>
+
+        <tr data-category="with-data neurips amnesiac">
+            <td>999</td>
+            <td class="year">2021</td>
+            <td><span class="venue neurips">NeurIPS</span></td>
+            <td><strong>Amnesiac Machine Learning</strong></td>
+            <td>Graves et al.</td>
+            <td class="citations">378+</td>
+            <td class="technique">Statistical Queries</td>
+            <td>Statistical guarantees and multiple retraining-free methods</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://arxiv.org/abs/2010.10981" class="link">ArXiv</a></td>
+        </tr>
+
+        <tr data-category="with-data neurips remember">
+            <td>999</td>
+            <td class="year">2021</td>
+            <td><span class="venue neurips">NeurIPS</span></td>
+            <td><strong>Remember What You Want to Forget: Algorithms for Machine Unlearning</strong></td>
+            <td>Sekhari et al.</td>
+            <td class="citations">395+</td>
+            <td class="technique">Optimization-based</td>
+            <td>Efficient removal while retaining accuracy — optimization-based</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://arxiv.org/abs/2103.03279" class="link">ArXiv</a></td>
+        </tr>
+
+        <tr data-category="with-data cvpr hessian">
+            <td>999</td>
+            <td class="year">2022</td>
+            <td><span class="venue cvpr">CVPR</span></td>
+            <td><strong>Deep Unlearning via Randomized Conditionally Independent Hessians</strong></td>
+            <td>Mehta et al.</td>
+            <td class="citations">115+</td>
+            <td class="technique">Hessian-based</td>
+            <td>Uses second-order information for efficient unlearning</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://arxiv.org/abs/2204.07655" class="link">ArXiv</a></td>
+        </tr>
+
+        <tr data-category="with-data aistats fast">
+            <td>999</td>
+            <td class="year">2022</td>
+            <td><span class="venue aistats">AISTATS</span></td>
+            <td><strong>Fast Machine Unlearning without Retraining through Selective Synaptic
+                    Dampening</strong></td>
+            <td>Foster et al.</td>
+            <td class="citations">134+</td>
+            <td class="technique">Synaptic Dampening</td>
+            <td>One of the fastest retraining-efficient approaches</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://arxiv.org/abs/2308.07707" class="link">ArXiv</a></td>
+        </tr>
+
+        <tr data-category="data-free tifs zero">
+            <td>999</td>
+            <td class="year">2023</td>
+            <td><span class="venue tifs">IEEE</span></td>
+            <td><strong>Zero-Shot Machine Unlearning</strong></td>
+            <td>Chundawat et al.</td>
+            <td class="citations">215+</td>
+            <td class="technique">Zero-shot</td>
+            <td>Highlights efficiency — useful transition paper toward "without data"</td>
+            <td class="no">No</td>
+            <td class="yes">Yes</td>
+            <td><a href="https://arxiv.org/abs/2201.05629" class="link">ArXiv</a></td>
+        </tr>
+
+        <tr data-category="with-data cvpr boundary">
+            <td>999</td>
+            <td class="year">2023</td>
+            <td><span class="venue cvpr">CVPR</span></td>
+            <td><strong>Boundary Unlearning: Rapid Forgetting of Deep Networks via Shifting the Decision
+                    Boundary</strong></td>
+            <td>Chen et al.</td>
+            <td class="citations">136+</td>
+            <td class="technique">Boundary Shifting</td>
+            <td>Novel approach using decision boundary manipulation</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://openaccess.thecvf.com/content/CVPR2023/papers/Chen_Boundary_Unlearning_Rapid_Forgetting_of_Deep_Networks_via_Shifting_the_Decision_CVPR_2023_paper.pdf"
+                    class="link">CVF</a></td>
+        </tr>
+
+        <tr data-category="with-data cvpr cuda">
+            <td>999</td>
+            <td class="year">2023</td>
+            <td><span class="venue cvpr">CVPR</span></td>
+            <td><strong>CUDA: Convolution-based Unlearnable Datasets</strong></td>
+            <td>Sadasivan et al.</td>
+            <td class="citations">38+</td>
+            <td class="technique">Convolution Shortcuts</td>
+            <td>Prevents learning by adding imperceptible shortcuts</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://openaccess.thecvf.com/content/CVPR2023/papers/Sadasivan_CUDA_Convolution-Based_Unlearnable_Datasets_CVPR_2023_paper.pdf"
+                    class="link">CVF</a></td>
+        </tr>
+
+        <tr data-category="data-free iclr label">
+            <td>999</td>
+            <td class="year">2024</td>
+            <td><span class="venue iclr">ICLR</span></td>
+            <td><strong>Label-Agnostic Forgetting: A Supervision-Free Unlearning in Deep Models</strong>
+            </td>
+            <td>Kumar et al.</td>
+            <td class="citations">21+</td>
+            <td class="technique">Supervision-free</td>
+            <td>First supervision-free unlearning approach</td>
+            <td class="no">No</td>
+            <td class="yes">Yes</td>
+            <td><a href="https://arxiv.org/abs/2404.00506" class="link">ArXiv</a></td>
+        </tr>
+        <tr data-category="with-data neurips federated">
+            <td>999</td>
+            <td class="year">2024</td>
+            <td><span class="venue neurips">NeurIPS</span></td>
+            <td><strong>Large Language Model Unlearning</strong></td>
+            <td>Yuanshun  et al.</td>
+            <td class="citations">305+</td>
+            <td class="technique">LLM unlearning</td>
+            <td>study how to perform unlearning
+            </td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="https://proceedings.neurips.cc/paper_files/paper/2024/hash/be52acf6bccf4a8c0a90fe2f5cfcead3-Abstract-Conference.html">NeurIPS</a></td>
+        </tr>
+        <tr data-category="with-data iclr salun">
+            <td>999</td>
+            <td class="year">2024</td>
+            <td><span class="venue iclr">ICLR</span></td>
+            <td><strong>SalUn: Empowering Machine Unlearning via Gradient-based Weight Saliency</strong>
+            </td>
+            <td>Fan et al.</td>
+            <td class="citations">201+</td>
+            <td class="technique">Saliency-based</td>
+            <td>Uses weight importance for selective unlearning</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://iclr.cc/virtual/2024/poster/18130" class="link">ICLR</a></td>
+        </tr>
+
+        <tr data-category="with-data cvpr vit">
+            <td>999</td>
+            <td class="year">2024</td>
+            <td><span class="venue cvpr">CVPR</span></td>
+            <td><strong>Forget-Me-Not: Learning to Forget in Text-to-Image Diffusion Models</strong></td>
+            <td>Zhang et al.</td>
+            <td class="citations">268+</td>
+            <td class="technique">Diffusion Unlearning</td>
+            <td>Directly relevant to Vision Transformers — bridges Part 1 → Part 2</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://arxiv.org/abs/2303.17591" class="link">ArXiv</a></td>
+        </tr>
+
+        <tr data-category="data-free cvpr source-free">
+            <td>999</td>
+            <td class="year">2025</td>
+            <td><span class="venue cvpr">CVPR</span></td>
+            <td><strong>Towards Source-Free Machine Unlearning</strong></td>
+            <td>Ahmed et al.</td>
+            <td class="citations">15+</td>
+            <td class="technique">Source-free</td>
+            <td>Enables efficient zero-shot unlearning with theoretical guarantees</td>
+            <td class="no">No</td>
+            <td class="yes">Yes</td>
+            <td><a href="https://openaccess.thecvf.com/content/CVPR2025/html/Ahmed_Towards_Source-Free_Machine_Unlearning_CVPR_2025_paper.html"
+                    class="link">CVF</a></td>
+        </tr>
+
+        <tr data-category="data-free cvpr lotus">
+            <td>999</td>
+            <td class="year">2025</td>
+            <td><span class="venue cvpr">CVPR</span></td>
+            <td><strong>LoTUS: Large-Scale Machine Unlearning with a Taste of Uncertainty</strong></td>
+            <td>Li et al.</td>
+            <td class="citations">1+</td>
+            <td class="technique">Uncertainty-based</td>
+            <td>Large-scale unlearning using uncertainty quantification</td>
+            <td class="no">No</td>
+            <td class="yes">Yes</td>
+            <td><a href="https://cvpr.thecvf.com/virtual/2025/poster/33292" class="link">CVPR</a></td>
+        </tr>
+
+        <tr data-category="with-data cvpr decoupled">
+            <td>999</td>
+            <td class="year">2025</td>
+            <td><span class="venue cvpr">CVPR</span></td>
+            <td><strong>Decoupled Distillation to Erase: A General Unlearning Method for Any Class-centric
+                    Tasks</strong></td>
+            <td>Wang et al.</td>
+            <td class="citations">5+</td>
+            <td class="technique">Distillation-based</td>
+            <td>General framework for class-centric unlearning tasks</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://cvpr.thecvf.com/virtual/2025/poster/33956" class="link">CVPR</a></td>
+        </tr>
+
+
+        <tr data-category="with-data neurips bayesian">
+            <td>999</td>
+            <td class="year">2020</td>
+            <td><span class="venue neurips">NeurIPS</span></td>
+            <td><strong>Variational Bayesian Unlearning</strong></td>
+            <td>Nguyen et al.</td>
+            <td class="citations">170+</td>
+            <td class="technique">Posterior surgery</td>
+            <td>Bayesian perspective: update posterior to remove data influence</td>
+            <td class="no">No</td>
+            <td class="yes">Yes</td>
+            <td><a class="link" href="https://neurips.cc/virtual/2020/poster/18547">NeurIPS</a></td>
+        </tr>
+
+
+        <tr data-category="with-data aistats approximate">
+            <td>999</td>
+            <td class="year">2021</td>
+            <td><span class="venue aistats">AISTATS</span></td>
+            <td><strong>Approximate Data Deletion from Machine Learning Models</strong></td>
+            <td>Izzo et al.</td>
+            <td class="citations">368+</td>
+            <td class="technique">Influence/Newton updates</td>
+            <td>Fast approximate unlearning with small accuracy cost</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="http://proceedings.mlr.press/v130/izzo21a.html">PMLR</a></td>
+        </tr>
+
+
+
+        <tr data-category="with-data cvpr knowledge-transfer">
+            <td>999</td>
+            <td class="year">2023</td>
+            <td><span class="venue cvpr">CVPR</span></td>
+            <td><strong>ERM-KTP: Knowledge-Level Machine Unlearning via Knowledge Transfer</strong></td>
+            <td>Lin et al.</td>
+            <td class="citations">63+</td>
+            <td class="technique">Masking + distillation</td>
+            <td>Transfers retain knowledge while erasing class-specific features</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link"
+                    href="https://openaccess.thecvf.com/content/CVPR2023/papers/Lin_ERM-KTP_Knowledge-Level_Machine_Unlearning_via_Knowledge_Transfer_CVPR_2023_paper.pdf">CVF</a>
+            </td>
+        </tr>
+
+        <tr data-category="with-data ndss labels-features">
+            <td>999</td>
+            <td class="year">2023</td>
+            <td><span class="venue ndss">NDSS</span></td>
+            <td><strong>Machine Unlearning of Features and Labels</strong></td>
+            <td>Warnecke et al.</td>
+            <td class="citations">265+</td>
+            <td class="technique">Feature/label scrubbing</td>
+            <td>Unlearning beyond instances: remove feature- or class-level information</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link"
+                    href="https://www.ndss-symposium.org/wp-content/uploads/2023/02/ndss2023_s87_paper.pdf">PDF</a>
+            </td>
+        </tr>
+
+        <tr data-category="with-data neurips distillation">
+            <td>999</td>
+            <td class="year">2023</td>
+            <td><span class="venue neurips">NeurIPS</span></td>
+            <td><strong>Towards Unbounded Machine Unlearning (SCRUB)</strong></td>
+            <td>Kurmanji et al.</td>
+            <td class="citations">280+</td>
+            <td class="technique">Teacher–student SCRUB</td>
+            <td>Strong deep unlearning via student trained to diverge on forget set, retain elsewhere</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="https://arxiv.org/abs/2302.09880">ArXiv</a></td>
+        </tr>
+
+
+
+        <tr data-category="with-data icml certified">
+            <td>999</td>
+            <td class="year">2024</td>
+            <td><span class="venue icml">ICML</span></td>
+            <td><strong>Towards Certified Unlearning for Deep Neural Networks</strong></td>
+            <td>Zhang et al.</td>
+            <td class="citations">23+</td>
+            <td class="technique">Approx. certificates for DNNs</td>
+            <td>Bridges certified guarantees to non-convex CNNs with practical protocols</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="https://arxiv.org/abs/2408.00920">ArXiv</a></td>
+        </tr>
+
+        <tr data-category="with-data icml evaluation">
+            <td>999</td>
+            <td class="year">2024</td>
+            <td><span class="venue icml">ICML</span></td>
+            <td><strong>Verification of Machine Unlearning is Fragile</strong></td>
+            <td>Thudi et al.</td>
+            <td class="citations">15+</td>
+            <td class="technique">Evaluation pitfalls</td>
+            <td>Shows popular verification tests are brittle; proposes stronger evaluations</td>
+            <td class="yes">Yes</td>
+            <td class="yes">Yes</td>
+            <td><a class="link" href="https://arxiv.org/abs/2408.00929">AeXiv</a></td>
+        </tr>
+
+        <tr data-category="with-data neurips dp-noise">
+            <td>999</td>
+            <td class="year">2024</td>
+            <td><span class="venue neurips">NeurIPS</span></td>
+            <td><strong>Langevin Unlearning: Noisy Gradient Descent for Machine Unlearning</strong></td>
+            <td>Chien et al.</td>
+            <td class="citations">27+</td>
+            <td class="technique">Noisy GD (Langevin)</td>
+            <td>Unifies DP training and approximate certified unlearning for deep nets</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="https://arxiv.org/abs/2401.10371">ArXiv</a></td>
+        </tr>
+
+        <tr data-category="data-free icml certified">
+            <td>999</td>
+            <td class="year">2025</td>
+            <td><span class="venue icml">ICML</span></td>
+            <td><strong>A Certified Unlearning Approach without Access to Source Data</strong></td>
+            <td>Basaran et al.</td>
+            <td class="citations">0+</td>
+            <td class="technique">Certified source-free</td>
+            <td>First certificates for data-free unlearning via surrogate distribution matching</td>
+            <td class="no">No</td>
+            <td class="yes">Yes</td>
+            <td><a class="link" href="http://icml.cc/virtual/2025/poster/46268">ICML</a></td>
+        </tr>
+
+        <tr data-category="with-data icml certified">
+            <td>999</td>
+            <td class="year">2025</td>
+            <td><span class="venue icml">ICML</span></td>
+            <td><strong>Certified Unlearning for Neural Networks</strong></td>
+            <td>Lee et al.</td>
+            <td class="citations">0+</td>
+            <td class="technique">General NN certificates</td>
+            <td>Certification framework extending beyond convexity to deep CNNs</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="http://icml.cc/virtual/2025/poster/46518">ICML</a></td>
+        </tr>
+
+        <tr data-category="with-data iclr certified">
+            <td>999</td>
+            <td class="year">2025</td>
+            <td><span class="venue iclr">ICLR</span></td>
+            <td><strong>Hessian-Free Online Certified Unlearning</strong></td>
+            <td>Kim et al.</td>
+            <td class="citations">0+</td>
+            <td class="technique">Online certificates</td>
+            <td>Enables repeated deletions with certification without Hessians</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="https://iclr.cc/virtual/2025/poster/30533">ICLR</a></td>
+        </tr>
+
+        <tr data-category="with-data iclr representation">
+            <td>999</td>
+            <td class="year">2025</td>
+            <td><span class="venue iclr">ICLR</span></td>
+            <td><strong>Selectively Unlearning via Representation Erasure (Domain Adversarial)</strong></td>
+            <td>Nguyen et al.</td>
+            <td class="citations">0+</td>
+            <td class="technique">Domain-adversarial erasure</td>
+            <td>Erases target concept subspaces while retaining generalization</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="https://iclr.cc/virtual/2025/poster/30023">ICLR</a></td>
+        </tr>
+
+        <tr data-category="with-data iclr robust">
+            <td>999</td>
+            <td class="year">2025</td>
+            <td><span class="venue iclr">ICLR</span></td>
+            <td><strong>Adversarial Machine Unlearning</strong></td>
+            <td>Lee et al.</td>
+            <td class="citations">0+</td>
+            <td class="technique">Minimax training</td>
+            <td>Game-theoretic unlearning robust to relearning/attacks</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="https://iclr.cc/virtual/2025/poster/28088">ICLR</a></td>
+        </tr>
+
+        <tr data-category="with-data iclr evaluation">
+            <td>999</td>
+            <td class="year">2025</td>
+            <td><span class="venue iclr">ICLR</span></td>
+            <td><strong>The Utility and Complexity of In-/Out-of-Distribution Machine Unlearning</strong>
+            </td>
+            <td>Chen et al.</td>
+            <td class="citations">0+</td>
+            <td class="technique">OOD vs ID analysis</td>
+            <td>Clarifies when unlearning is easier/harder; guides CNN practice</td>
+            <td class="yes">Yes</td>
+            <td class="yes">Yes</td>
+            <td><a class="link" href="https://iclr.cc/virtual/2025/poster/30223">ICLR</a></td>
+        </tr>
+
+        <tr data-category="with-data iclr attack">
+            <td>999</td>
+            <td class="year">2025</td>
+            <td><span class="venue iclr">ICLR</span></td>
+            <td><strong>Unlearn and Burn: Adversarial Unlearning Requests Destroy Accuracy</strong></td>
+            <td>Ye et al.</td>
+            <td class="citations">0+</td>
+            <td class="technique">Adversarial forget-set</td>
+            <td>Shows adversarially chosen forget requests can devastate utility; proposes mitigations</td>
+            <td class="yes">Yes</td>
+            <td class="yes">Yes</td>
+            <td><a class="link" href="https://iclr.cc/virtual/2025/poster/30919">ICLR</a></td>
+        </tr>
+
+        <tr data-category="with-data iccv quantized">
+            <td>999</td>
+            <td class="year">2025</td>
+            <td><span class="venue iccv">ICCV</span></td>
+            <td><strong>Robust Machine Unlearning for Quantized Neural Networks</strong></td>
+            <td>Zhang et al.</td>
+            <td class="citations">0+</td>
+            <td class="technique">Adaptive gradient reweighting</td>
+            <td>Extends unlearning robustness to low-bit CNN deployments</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="https://arxiv.org/abs/2503.13917">ArXiv</a></td>
+        </tr>
+
+        <tr data-category="with-data iccv federated">
+            <td>999</td>
+            <td class="year">2025</td>
+            <td><span class="venue iccv">ICCV</span></td>
+            <td><strong>Forgetting Through Transforming: Federated Unlearning via Class-Aware Representation
+                    Transform</strong></td>
+            <td>Chen et al.</td>
+            <td class="citations">0+</td>
+            <td class="technique">Rep. transformation (FL)</td>
+            <td>Federated class unlearning with strong utility retention on CNNs</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="https://arxiv.org/abs/2410.06848">ArXiv</a></td>
+        </tr>
+
+        <tr data-category="with-data iccv attack">
+            <td>999</td>
+            <td class="year">2025</td>
+            <td><span class="venue iccv">ICCV</span></td>
+            <td><strong>Reminiscence Attack on Residuals: Exploiting Approximate Unlearning</strong></td>
+            <td>Park et al.</td>
+            <td class="citations">0+</td>
+            <td class="technique">Residual-trace attack</td>
+            <td>Shows traces remain after approximate unlearning; reconstructs forgotten info</td>
+            <td class="yes">Yes</td>
+            <td class="yes">Yes</td>
+            <td><a class="link" href="https://arxiv.org/abs/2507.20573">ArXiv</a></td>
+        </tr>
+
+        <tr data-category="with-data ieee federated">
+            <td>999</td>
+            <td class="year">2021</td>
+            <td><span class="venue ieee">IEEE</span></td>
+            <td><strong>Federated Unlearning (Federaser: Enabling efficient client-level data removal from
+                    federated learning models)</strong></td>
+            <td>Liu et al.</td>
+            <td class="citations">231+</td>
+            <td class="technique">Client update subtraction</td>
+            <td>First practical client-level unlearning in federated CNN training</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="https://arxiv.org/abs/2012.13891">ArXiv</a></td>
+        </tr>
+
+        <tr data-category="with-data neurips security">
+            <td>999</td>
+            <td class="year">2023</td>
+            <td><span class="venue neurips">NeurIPS</span></td>
+            <td><strong>Hidden Poison: Unlearning Enables Camouflaged Poisoning Attacks</strong></td>
+            <td>Di et al.</td>
+            <td class="citations">57+</td>
+            <td class="technique">Clean-label poisoning</td>
+            <td>Reveals new attack surface where unlearning triggers model collapse</td>
+            <td class="yes">Yes</td>
+            <td class="yes">Yes</td>
+            <td><a class="link"
+                    href="https://proceedings.neurips.cc/paper_files/paper/2023/file/8b4add8b0aa8749d80a34ca5d941c355-Paper-Conference.pdf">NeurIPS</a>
+            </td>
+        </tr>
+
+        <tr data-category="with-data neurips security">
+            <td>999</td>
+            <td class="year">2024</td>
+            <td><span class="venue neurips">NeurIPS</span></td>
+            <td><strong>Reconstruction Attacks on Machine Unlearning: Simple Models are Vulnerable</strong>
+            </td>
+            <td>Bertran; Tang; Kearns; Morgenstern; Roth; Wu</td>
+            <td class="citations">17+</td>
+            <td class="technique">Differencing attack</td>
+            <td>Shows exact reconstruction is possible in some settings; warns for CNN pipelines</td>
+            <td class="yes">Yes</td>
+            <td class="yes">Yes</td>
+            <td><a class="link"
+                    href="https://proceedings.neurips.cc/paper_files/paper/2024/hash/bd996108ed57d388866ca6deb7acf6cb-Abstract-Conference.html">NeurIPS</a>
+            </td>
+        </tr>
+
+        <tr data-category="with-data eccv robust">
+            <td>999</td>
+            <td class="year">2024</td>
+            <td><span class="venue eccv">ECCV</span></td>
+            <td><strong>Learning to Unlearn for Robust Machine Learning</strong></td>
+            <td>Huang et al.</td>
+            <td class="citations">22+</td>
+            <td class="technique">Joint robust forgetting</td>
+            <td>Couples robustness with unlearning to resist relearning/attacks</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="https://www.ecva.net/papers/eccv_2024/papers_ECCV/papers/06863-supp.pdf">ECCV</a>
+            </td>
+        </tr>
+
+        <tr data-category="with-data icml theory">
+            <td>999</td>
+            <td class="year">2023</td>
+            <td><span class="venue icml">ICML</span></td>
+            <td><strong>Forget Unlearning: Towards True Data-Deletion in Machine Learning</strong></td>
+            <td>Golatkar et al.</td>
+            <td class="citations">56+</td>
+            <td class="technique">Stronger semantics</td>
+            <td>Clarifies goals/metrics and pushes toward true deletion semantics</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="https://icml. cc/virtual/2023/poster/23753">ICML</a></td>
+        </tr>
+
+        <tr data-category="with-data cvpr masks">
+            <td>999</td>
+            <td class="year">2023</td>
+            <td><span class="venue cvpr">CVPR</span></td>
+            <td><strong>Unlearning with Fisher Masking</strong></td>
+            <td>Liu et al.</td>
+            <td class="citations">6+</td>
+            <td class="technique">Fisher masks</td>
+            <td>Masks parameters by Fisher importance to localize forgetting</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="https://openreview.net/pdf?id=UifByHdLmmf">PDF</a></td>
+        </tr>
+
+        <tr data-category="with-data icml system">
+            <td>999</td>
+            <td class="year">2025</td>
+            <td><span class="venue icml">ICML</span></td>
+            <td><strong>System-Aware Unlearning Algorithms: Use Lesser, Forget Faster</strong></td>
+            <td>Zhao et al.</td>
+            <td class="citations">0+</td>
+            <td class="technique">System-co-design</td>
+            <td>Co-designs algorithms with compute/memory constraints for faster CNN unlearning</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="https://icml.cc/virtual/2025/poster/45985">ICML</a></td>
+        </tr>
+
+        <tr data-category="with-data icml adversarial">
+            <td>999</td>
+            <td class="year">2025</td>
+            <td><span class="venue icml">ICML</span></td>
+            <td><strong>Not All Wrong is Bad: Using Adversarial Examples for Unlearning</strong></td>
+            <td>Gupta et al.</td>
+            <td class="citations">1+</td>
+            <td class="technique">Adversarial forgetting</td>
+            <td>Drives forgetting using targeted adversarial example generation</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="https://icml.cc/virtual/2025/poster/46097">ICML</a></td>
+        </tr>
+
+        <tr data-category="with-data icml attack">
+            <td>999</td>
+            <td class="year">2025</td>
+            <td><span class="venue icml">ICML</span></td>
+            <td><strong>Flexible, Efficient, and Stable Adversarial Attacks on Machine Unlearning</strong>
+            </td>
+            <td>Zhou et al.</td>
+            <td class="citations">0+</td>
+            <td class="technique">Attack suite</td>
+            <td>Comprehensive attacks exposing failure modes of CNN unlearning methods</td>
+            <td class="yes">Yes</td>
+            <td class="yes">Yes</td>
+            <td><a class="link" href="https://icml.cc/virtual/2025/poster/44738">ICML</a></td>
+        </tr>
+
+        <tr data-category="with-data arxiv evaluation">
+            <td>999</td>
+            <td class="year">2024</td>
+            <td><span class="venue arxiv">ArXiv</span></td>
+            <td><strong>Revisiting Machine Unlearning with Dimensional Alignment</strong></td>
+            <td>Wang et al.</td>
+            <td class="citations">3+</td>
+            <td class="technique">Dimensional alignment</td>
+            <td>Stabilizes CNN unlearning and critiques common metrics</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="https://arxiv.org/abs/2407.17710">ArXiv</a></td>
+        </tr>
+
+        <tr data-category="with-data cvpr federated">
+            <td>999</td>
+            <td class="year">2025</td>
+            <td><span class="venue cvpr">CVPR</span></td>
+            <td><strong>NoT: Federated Unlearning via Weight Negation</strong></td>
+            <td>Sun et al.</td>
+            <td class="citations">0+</td>
+            <td class="technique">Weight negation (FL)</td>
+            <td>Simple operator for client/class forgetting in federated CNNs</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="https://cvpr.thecvf.com/virtual/2025/poster/34029">CVPR</a></td>
+        </tr>
+
+        <tr data-category="with-data cvpr federated">
+            <td>999</td>
+            <td class="year">2025</td>
+            <td><span class="venue cvpr">CVPR</span></td>
+            <td><strong>Unlearning through Knowledge Overwriting: Reversible Federated Unlearning via Sparse
+                    Adapters</strong></td>
+            <td>Zhong et al.</td>
+            <td class="citations">6+</td>
+            <td class="technique">Selective sparse adapters</td>
+            <td>Reversible, low-cost unlearning by overwriting with adapters without changing base weights
+            </td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="https://arxiv.org/abs/2502.20709">ArXiv</a></td>
+        </tr>
+        
+
+
+        <tr data-category="with-data icml negative">
+            <td>999</td>
+            <td class="year">2025</td>
+            <td><span class="venue icml">ICML</span></td>
+            <td><strong>Machine Unlearning Fails to Remove Data Poisoning Attacks</strong></td>
+            <td>Pawelczyk et al.</td>
+            <td class="citations">26+</td>
+            <td class="technique">Negative result (poison)</td>
+            <td>Shows several unlearning methods fail under poisoning; urges stronger protocols</td>
+            <td class="yes">Yes</td>
+            <td class="yes">Yes</td>
+            <td><a class="link"
+                    href="https://proceedings.iclr.cc/paper_files/paper/2025/file/7e810b2c75d69be186cadd2fe3febeab-Paper-Conference.pdf">PDF</a>
+            </td>
+        </tr>
+
+        <tr data-category="with-data icml monitoring">
+            <td>999</td>
+            <td class="year">2023</td>
+            <td><span class="venue icml">ICML</span></td>
+            <td><strong>Fast Federated Machine Unlearning with Nonlinear Functional Theory</strong></td>
+            <td>Li et al.</td>
+            <td class="citations">72+</td>
+            <td class="technique">Nonlinear functional FL</td>
+            <td>Accelerates federated unlearning; applicable to CNN image tasks</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="https://icml.cc/virtual/2023/poster/23542">ICML</a></td>
+        </tr>
+
+        <tr data-category="with-data icml theory">
+            <td>999</td>
+            <td class="year">2023</td>
+            <td><span class="venue icml">ICML</span></td>
+            <td><strong>From Adaptive Query Release to Machine Unlearning (Extended Analysis)</strong></td>
+            <td>Guo et al.</td>
+            <td class="citations">7+</td>
+            <td class="technique">Generalization bounds</td>
+            <td>Provides deletion capacity insights guiding CNN unlearning scales</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="https://icml.cc/virtual/2023/poster/23690">ICML</a></td>
+        </tr>
+
+        <tr data-category="with-data icml certification">
+            <td>999</td>
+            <td class="year">2025</td>
+            <td><span class="venue icml">ICML</span></td>
+            <td><strong>Targeted Unlearning with Single Layer Unlearning Gradient</strong></td>
+            <td>Zikui et al.</td>
+            <td class="citations">1+</td>
+            <td class="technique">Single-layer gradient</td>
+            <td>Efficient layer-wise unlearning for CNNs with targeted edits</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="http://icml.cc/virtual/2025/poster/46379">ICML</a></td>
+        </tr>
+
+        <tr data-category="with-data icml matrix">
+            <td>999</td>
+            <td class="year">2025</td>
+            <td><span class="venue icml">ICML</span></td>
+            <td><strong>SEMU: Singular Value Decomposition for Efficient Machine Unlearning</strong></td>
+            <td>Patel et al.</td>
+            <td class="citations">3+</td>
+            <td class="technique">Low-rank SVD</td>
+            <td>Matrix factorization localizes/reverses forget-set influence efficiently</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="http://icml.cc/virtual/2025/poster/44285">ICML</a></td>
+        </tr>
+    </tbody>
+</table>
+        </div>
+    </div>
+
+    <script>
+        function filterTable(category) {
+            const table = document.getElementById('papersTable');
+            const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            const buttons = document.querySelectorAll('.filter-btn');
+
+            // Update button states
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Filter rows
+            for (let i = 0; i < rows.length; i++) {
+                const row = rows[i];
+                const categories = row.getAttribute('data-category');
+
+                if (category === 'all' || categories.includes(category)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        }
+
+        function exportToCSV() {
+            const table = document.getElementById('papersTable');
+            const rows = table.querySelectorAll('tr');
+            let csv = '';
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('th, td');
+                const rowData = [];
+                cells.forEach(cell => {
+                    let text = cell.textContent.trim();
+                    text = text.replace(/"/g, '""');
+                    rowData.push(`"${text}"`);
+                });
+                csv += rowData.join(',') + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'machine_unlearning_papers_cnn.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        function sortTable(columnIndex, dataType) {
+            const table = document.getElementById('papersTable');
+            const tbody = table.getElementsByTagName('tbody')[0];
+            const rows = Array.from(tbody.getElementsByTagName('tr'));
+            const header = table.querySelectorAll('th')[columnIndex];
+
+            // Get current sort direction
+            let sortDirection = header.getAttribute('data-sort') || 'none';
+            let newDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+
+            // Reset all headers
+            table.querySelectorAll('th').forEach(th => {
+                th.setAttribute('data-sort', 'none');
+                th.classList.remove('sort-asc', 'sort-desc');
+            });
+
+            // Set new sort direction
+            header.setAttribute('data-sort', newDirection);
+            header.classList.add('sort-' + newDirection);
+
+            // Sort rows
+            rows.sort((a, b) => {
+                let aValue = a.getElementsByTagName('td')[columnIndex].textContent.trim();
+                let bValue = b.getElementsByTagName('td')[columnIndex].textContent.trim();
+
+                if (dataType === 'number') {
+                    // Extract numbers from text (e.g., "1200+" becomes 1200)
+                    aValue = parseInt(aValue.replace(/\D/g, '')) || 0;
+                    bValue = parseInt(bValue.replace(/\D/g, '')) || 0;
+                } else {
+                    aValue = aValue.toLowerCase();
+                    bValue = bValue.toLowerCase();
+                }
+
+                if (newDirection === 'asc') {
+                    return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+                } else {
+                    return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
+                }
+            });
+
+            // Re-append sorted rows
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        // Add smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        function updateSummaryStats() {
+            const rows = document.querySelectorAll('#papersTable tbody tr');
+            let total = 0, withData = 0, dataFree = 0;
+            let years = [];
+            rows.forEach(row => {
+                if (row.style.display === 'none') return;
+                total++;
+                const cat = row.getAttribute('data-category') || '';
+                if (cat.includes('with-data')) withData++;
+                if (cat.includes('data-free')) dataFree++;
+                const yearCell = row.querySelector('.year');
+                if (yearCell) {
+                    const year = parseInt(yearCell.textContent.trim());
+                    if (!isNaN(year)) years.push(year);
+                }
+            });
+            document.getElementById('totalPapers').textContent = total;
+            document.getElementById('withDataPapers').textContent = withData;
+            document.getElementById('dataFreePapers').textContent = dataFree;
+            if (years.length) {
+                const minYear = Math.min(...years);
+                const maxYear = Math.max(...years);
+                document.getElementById('yearRange').textContent = minYear + '-' + maxYear;
+            } else {
+                document.getElementById('yearRange').textContent = '-';
+            }
+        }
+        // Initial stats
+        updateSummaryStats();
+        // Update stats on filter/sort
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => setTimeout(updateSummaryStats, 10));
+        });
+        document.querySelectorAll('#papersTable th').forEach(th => {
+            th.addEventListener('click', () => setTimeout(updateSummaryStats, 10));
+        });
+    </script>
+</body>
+
+</html>
