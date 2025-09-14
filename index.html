@@ -166,6 +166,9 @@
         .neurips {
             background: #e74c3c;
         }
+        .aaai {
+            background: #024d10;
+        }
 
         .icml {
             background: #3498db;
@@ -407,6 +410,11 @@
             background: #ec8479;
             color: #000;
         }
+        
+        .container.container.dark-mode .aaai {
+            background: #45c275;
+            color: #000;
+        }
 
         .container.container.dark-mode .icml {
             background: #71a5c8;
@@ -500,7 +508,7 @@
 
 <body>
     <div class="container">
-        <h1>Machine Unlearning in CNNs: Groundbreaking Papers (2015-2025)</h1>
+        <h1>Machine Unlearning - Groundbreaking Papers</h1>
 
         <div class="summary-stats" id="summaryStats">
             <div class="stat-card">
@@ -524,7 +532,7 @@
         <div class="filters">
             <button class="filter-btn active" onclick="filterTable('all')">All Papers</button>
             <button class="filter-btn" onclick="filterTable('with-data')">With Data</button>
-            <button class="filter-btn" onclick="filterTable('data-free')">Data-Free</button>
+            <button class="filter-btn" onclick="filterTable('ieee')">IEEE</button>
             <button class="filter-btn" onclick="filterTable('neurips')">NeurIPS</button>
             <button class="filter-btn" onclick="filterTable('icml')">ICML</button>
             <button class="filter-btn" onclick="filterTable('cvpr')">CVPR</button>
@@ -564,7 +572,7 @@
                 With Data <span class="sort-arrow"></span>
             </th>
             <th onclick="sortTable(9, 'text')" data-sort="none">
-                Without Data <span class="sort-arrow"></span>
+                Exact <span class="sort-arrow"></span>
             </th>
             <th onclick="sortTable(10, 'text')" data-sort="none">
                 Link <span class="sort-arrow"></span>
@@ -572,23 +580,50 @@
         </tr>
     </thead>
     <tbody>
-        <tr data-category="with-data neurips foundational">
+        <tr data-category="with-data neurips incremental">
             <td>1</td>
+            <td class="year">2000</td>
+            <td><span class="venue neurips">NeurIPS</span></td>
+            <td><strong>Incremental and Decremental Support Vector Machine Learning</strong></td>
+            <td>Gert & Poggio</td>
+            <td class="citations">1902+</td>
+            <td class="technique">Incremental SVM</td>
+            <td>Early work on updating/removing SVM training samples</td>
+            <td class="yes">Yes</td>
+            <td class="yes">Yes</td>
+            <td><a href="https://papers.nips.cc/paper_files/paper/2000/hash/155fa09596c7e18e50b58eb7e0c6ccb4-Abstract.html" class="link">NeurIPS</a></td>
+        </tr>
+
+        <tr data-category="with-data ieee incremental">
+            <td>2</td>
+            <td class="year">2009</td>
+            <td><span class="venue ieee">IEEE</span></td>
+            <td><strong>Multiple Incremental Decremental Learning of Support Vector Machines</strong></td>
+            <td>Karasuyama & Ichiro</td>
+            <td class="citations">154+</td>
+            <td class="technique">Incremental SVM</td>
+            <td>Extended incremental/decremental SVMs to handle multiple updates</td>
+            <td class="yes">Yes</td>
+            <td class="yes">Yes</td>
+            <td><a href="https://ieeexplore.ieee.org/document/5484614" class="link">IEEE</a></td>
+        </tr>
+        <tr data-category="with-data ieee foundational">
+            <td>3</td>
             <td class="year">2015</td>
             <td><span class="venue ieee">IEEE</span></td>
             <td><strong>Towards Making Systems Forget with Machine Unlearning</strong></td>
             <td>Cao & Yang</td>
             <td class="citations">960+</td>
             <td class="technique">Retraining-based</td>
-            <td>First formal definition of machine unlearning problem</td>
+            <td>summation based training for Statistical Query Models</td>
             <td class="yes">Yes</td>
-            <td class="no">No</td>
+            <td class="yes">Yes</td>
             <td><a href="https://ieeexplore.ieee.org/document/7163042" class="link">IEEE</a>
             </td>
         </tr>
 
         <tr data-category="with-data neurips scalable">
-            <td>2</td>
+            <td>4</td>
             <td class="year">2019</td>
             <td><span class="venue neurips">NeurIPS</span></td>
             <td><strong>Making AI Forget You: Data Deletion in Machine Learning</strong></td>
@@ -600,9 +635,34 @@
             <td class="no">No</td>
             <td><a href="https://arxiv.org/abs/1907.05012" class="link">ArXiv</a></td>
         </tr>
-
+        <tr data-category="with-data icml certified">
+            <td>5</td>
+            <td class="year">2020</td>
+            <td><span class="venue icml">ICML</span></td>
+            <td><strong>Certified Data Removal from Machine Learning Models</strong></td>
+            <td>Ginart et al.</td>
+            <td class="citations">619+</td>
+            <td class="technique">Certified Removal</td>
+            <td>First certified removal guarantees for linear models</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://arxiv.org/abs/1911.03030" class="link">ArXiv</a></td>
+        </tr>
+        <tr data-category="with-data neurips bayesian">
+            <td>6</td>
+            <td class="year">2020</td>
+            <td><span class="venue neurips">NeurIPS</span></td>
+            <td><strong>Variational Bayesian Unlearning</strong></td>
+            <td>Nguyen et al.</td>
+            <td class="citations">150+</td>
+            <td class="technique">Bayesian</td>
+            <td>Proposes Bayesian approach for approximate unlearning</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://arxiv.org/abs/2010.12883" class="link">ArXiv</a></td>
+        </tr>
         <tr data-category="with-data ieee partition">
-            <td>3</td>
+            <td>7</td>
             <td class="year">2020</td>
             <td><span class="venue ieee">IEEE</span></td>
             <td><strong>Machine Unlearning (SISA)</strong></td>
@@ -615,53 +675,9 @@
             <td><a href="https://arxiv.org/abs/1912.03817" class="link">ArXiv</a></td>
         </tr>
 
-        <tr data-category="with-data icml certified">
-            <td>4</td>
-            <td class="year">2020</td>
-            <td><span class="venue icml">ICML</span></td>
-            <td><strong>Certified Data Removal from Machine Learning Models</strong></td>
-            <td>Ginart et al.</td>
-            <td class="citations">619+</td>
-            <td class="technique">Certified Removal</td>
-            <td>First certified removal guarantees for linear models</td>
-            <td class="yes">Yes</td>
-            <td class="no">No</td>
-            <td><a href="https://arxiv.org/abs/1911.03030" class="link">ArXiv</a></td>
-        </tr>
-
-
-
-        <tr data-category="with-data cvpr cnn">
-            <td>5</td>
-            <td class="year">2020</td>
-            <td><span class="venue cvpr">CVPR</span></td>
-            <td><strong>External Sunshine of the Spotless Net: Selective Forgetting in Deep Networks</strong></td>
-            <td>Golatkar et al.</td>
-            <td class="citations">652+</td>
-            <td class="technique">Fisher Information</td>
-            <td>Selective class forgetting in CNNs, benchmark reference work</td>
-            <td class="yes">Yes</td>
-            <td class="no">No</td>
-            <td><a href="https://arxiv.org/abs/1911.04933" class="link">ArXiv</a></td>
-        </tr>
-
-        <tr data-category="data-free eccv blackbox">
-            <td>999</td>
-            <td class="year">2020</td>
-            <td><span class="venue eccv">ECCV</span></td>
-            <td><strong>Forgetting Outside the Box: Scrubbing Deep Networks of Information Accessible from
-                    Input-Output Observations</strong></td>
-            <td>Golatkar et al.</td>
-            <td class="citations">251+</td>
-            <td class="technique">Black-box Access</td>
-            <td>Forgetting from black-box model access — practical relevance</td>
-            <td class="no">No</td>
-            <td class="yes">Yes</td>
-            <td><a href="https://arxiv.org/abs/2003.02960" class="link">ArXiv</a></td>
-        </tr>
 
         <tr data-category="with-data ieee gradient">
-            <td>6</td>
+            <td>8</td>
             <td class="year">2021</td>
             <td><span class="venue ieee">IEEE</span></td>
             <td><strong>Code Machine Unlearning</strong></td>
@@ -674,38 +690,52 @@
             <td><a href="https://ieeexplore.ieee.org/abstract/document/9458237" class="link">IEEE</a></td>
         </tr>
 
-        <tr data-category="with-data ieee partition">
-            <td>999</td>
+        <tr data-category="with-data cvpr cnn">
+            <td>9</td>
             <td class="year">2020</td>
-            <td><span class="venue ieee">IEEE</span></td>
-            <td><strong>Learn to Forget: Machine Unlearning via Neuron Masking</strong></td>
-            <td>Zhuo et al.</td>
-            <td class="citations">84+</td>
-            <td class="technique">Forsaken</td>
+            <td><span class="venue cvpr">CVPR</span></td>
+            <td><strong>Eternal Sunshine of the Spotless Net: Selective Forgetting in Deep Networks</strong></td>
+            <td>Golatkar et al.</td>
+            <td class="citations">652+</td>
+            <td class="technique">Fisher Information</td>
+            <td>Selective class forgetting in CNNs, benchmark reference work</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://arxiv.org/abs/1911.04933" class="link">ArXiv</a></td>
+        </tr>
+
+        <tr data-category="data-free eccv blackbox">
+            <td>10</td>
+            <td class="year">2020</td>
+            <td><span class="venue eccv">ECCV</span></td>
+            <td><strong>Forgetting Outside the Box: Scrubbing Deep Networks of Information Accessible from
+                    Input-Output Observations</strong></td>
+            <td>Golatkar et al.</td>
+            <td class="citations">251+</td>
+            <td class="technique">Black-box Access</td>
+            <td>Forgetting from black-box model access — practical relevance</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://arxiv.org/abs/2003.02960" class="link">ArXiv</a></td>
+        </tr>
+        <tr data-category="data-free cvpr mixed">
+            <td>11</td>
+            <td class="year">2021</td>
+            <td><span class="venue cvpr">CVPR</span></td>
+            <td><strong>Mixed-Privacy Forgetting in Deep Networks</strong></td>
+            <td>Golatkar et al.</td>
+            <td class="citations">251+</td>
+            <td class="technique">mixed-box Access</td>
             <td></td>
             <td class="yes">Yes</td>
             <td class="no">No</td>
-            <td><a href="https://ieeexplore.ieee.org/abstract/document/9844865" class="link">IEEE</a></td>
+            <td><a href="https://arxiv.org/abs/2012.13431" class="link">ArXiv</a></td>
         </tr>
 
-        <tr data-category="with-data icml gradient">
-            <td>999</td>
+        <tr data-category="with-data aaai amnesiac">
+            <td>12</td>
             <td class="year">2021</td>
-            <td><span class="venue icml">ICML</span></td>
-            <td><strong>Descent-to-Delete: Gradient-Based Methods for Machine Unlearning</strong></td>
-            <td>Neel et al.</td>
-            <td class="citations">352+</td>
-            <td class="technique">Gradient Ascent</td>
-            <td>First gradient-based unlearning method, important for scalability</td>
-            <td class="yes">Yes</td>
-            <td class="no">No</td>
-            <td><a href="https://arxiv.org/abs/2007.02923" class="link">ArXiv</a></td>
-        </tr>
-
-        <tr data-category="with-data neurips amnesiac">
-            <td>999</td>
-            <td class="year">2021</td>
-            <td><span class="venue neurips">NeurIPS</span></td>
+            <td><span class="venue aaai">AAAI</span></td>
             <td><strong>Amnesiac Machine Learning</strong></td>
             <td>Graves et al.</td>
             <td class="citations">378+</td>
@@ -717,7 +747,7 @@
         </tr>
 
         <tr data-category="with-data neurips remember">
-            <td>999</td>
+            <td>13</td>
             <td class="year">2021</td>
             <td><span class="venue neurips">NeurIPS</span></td>
             <td><strong>Remember What You Want to Forget: Algorithms for Machine Unlearning</strong></td>
@@ -730,6 +760,49 @@
             <td><a href="https://arxiv.org/abs/2103.03279" class="link">ArXiv</a></td>
         </tr>
 
+        <tr data-category="with-data aistats approximate">
+            <td>14</td>
+            <td class="year">2021</td>
+            <td><span class="venue aistats">AISTATS</span></td>
+            <td><strong>Approximate Data Deletion from Machine Learning Models</strong></td>
+            <td>Izzo et al.</td>
+            <td class="citations">368+</td>
+            <td class="technique">Influence/Newton updates</td>
+            <td>Fast approximate unlearning with small accuracy cost</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a class="link" href="http://proceedings.mlr.press/v130/izzo21a.html">PMLR</a></td>
+        </tr>
+
+        <tr data-category="with-data icml gradient">
+            <td>15</td>
+            <td class="year">2021</td>
+            <td><span class="venue icml">ICML</span></td>
+            <td><strong>Descent-to-Delete: Gradient-Based Methods for Machine Unlearning</strong></td>
+            <td>Neel et al.</td>
+            <td class="citations">352+</td>
+            <td class="technique">Gradient Ascent</td>
+            <td>First gradient-based unlearning method, important for scalability</td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://arxiv.org/abs/2007.02923" class="link">ArXiv</a></td>
+        </tr>
+
+        <tr data-category="with-data ieee partition">
+            <td>16</td>
+            <td class="year">2020</td>
+            <td><span class="venue ieee">IEEE</span></td>
+            <td><strong>Learn to Forget: Machine Unlearning via Neuron Masking</strong></td>
+            <td>Zhuo et al.</td>
+            <td class="citations">84+</td>
+            <td class="technique">Forsaken</td>
+            <td></td>
+            <td class="yes">Yes</td>
+            <td class="no">No</td>
+            <td><a href="https://ieeexplore.ieee.org/abstract/document/9844865" class="link">IEEE</a></td>
+        </tr>
+
+        
         <tr data-category="with-data cvpr hessian">
             <td>999</td>
             <td class="year">2022</td>
@@ -769,7 +842,7 @@
             <td class="technique">Zero-shot</td>
             <td>Highlights efficiency — useful transition paper toward "without data"</td>
             <td class="no">No</td>
-            <td class="yes">Yes</td>
+            <td class="no">No</td>
             <td><a href="https://arxiv.org/abs/2201.05629" class="link">ArXiv</a></td>
         </tr>
 
@@ -815,7 +888,7 @@
             <td class="technique">Supervision-free</td>
             <td>First supervision-free unlearning approach</td>
             <td class="no">No</td>
-            <td class="yes">Yes</td>
+            <td class="no">No</td>
             <td><a href="https://arxiv.org/abs/2404.00506" class="link">ArXiv</a></td>
         </tr>
         <tr data-category="with-data neurips federated">
@@ -871,7 +944,7 @@
             <td class="technique">Source-free</td>
             <td>Enables efficient zero-shot unlearning with theoretical guarantees</td>
             <td class="no">No</td>
-            <td class="yes">Yes</td>
+            <td class="no">No</td>
             <td><a href="https://openaccess.thecvf.com/content/CVPR2025/html/Ahmed_Towards_Source-Free_Machine_Unlearning_CVPR_2025_paper.html"
                     class="link">CVF</a></td>
         </tr>
@@ -886,7 +959,7 @@
             <td class="technique">Uncertainty-based</td>
             <td>Large-scale unlearning using uncertainty quantification</td>
             <td class="no">No</td>
-            <td class="yes">Yes</td>
+            <td class="no">No</td>
             <td><a href="https://cvpr.thecvf.com/virtual/2025/poster/33292" class="link">CVPR</a></td>
         </tr>
 
@@ -906,34 +979,8 @@
         </tr>
 
 
-        <tr data-category="with-data neurips bayesian">
-            <td>999</td>
-            <td class="year">2020</td>
-            <td><span class="venue neurips">NeurIPS</span></td>
-            <td><strong>Variational Bayesian Unlearning</strong></td>
-            <td>Nguyen et al.</td>
-            <td class="citations">170+</td>
-            <td class="technique">Posterior surgery</td>
-            <td>Bayesian perspective: update posterior to remove data influence</td>
-            <td class="no">No</td>
-            <td class="yes">Yes</td>
-            <td><a class="link" href="https://neurips.cc/virtual/2020/poster/18547">NeurIPS</a></td>
-        </tr>
 
-
-        <tr data-category="with-data aistats approximate">
-            <td>999</td>
-            <td class="year">2021</td>
-            <td><span class="venue aistats">AISTATS</span></td>
-            <td><strong>Approximate Data Deletion from Machine Learning Models</strong></td>
-            <td>Izzo et al.</td>
-            <td class="citations">368+</td>
-            <td class="technique">Influence/Newton updates</td>
-            <td>Fast approximate unlearning with small accuracy cost</td>
-            <td class="yes">Yes</td>
-            <td class="no">No</td>
-            <td><a class="link" href="http://proceedings.mlr.press/v130/izzo21a.html">PMLR</a></td>
-        </tr>
+        
 
 
 
@@ -1008,8 +1055,8 @@
             <td class="citations">15+</td>
             <td class="technique">Evaluation pitfalls</td>
             <td>Shows popular verification tests are brittle; proposes stronger evaluations</td>
-            <td class="yes">Yes</td>
-            <td class="yes">Yes</td>
+            <td class="yes">Both</td>
+            <td class="no">No</td>
             <td><a class="link" href="https://arxiv.org/abs/2408.00929">AeXiv</a></td>
         </tr>
 
@@ -1037,7 +1084,7 @@
             <td class="technique">Certified source-free</td>
             <td>First certificates for data-free unlearning via surrogate distribution matching</td>
             <td class="no">No</td>
-            <td class="yes">Yes</td>
+            <td class="no">No</td>
             <td><a class="link" href="http://icml.cc/virtual/2025/poster/46268">ICML</a></td>
         </tr>
 
@@ -1107,8 +1154,8 @@
             <td class="citations">0+</td>
             <td class="technique">OOD vs ID analysis</td>
             <td>Clarifies when unlearning is easier/harder; guides CNN practice</td>
-            <td class="yes">Yes</td>
-            <td class="yes">Yes</td>
+            <td class="yes">Both</td>
+            <td class="no">No</td>
             <td><a class="link" href="https://iclr.cc/virtual/2025/poster/30223">ICLR</a></td>
         </tr>
 
@@ -1121,8 +1168,8 @@
             <td class="citations">0+</td>
             <td class="technique">Adversarial forget-set</td>
             <td>Shows adversarially chosen forget requests can devastate utility; proposes mitigations</td>
-            <td class="yes">Yes</td>
-            <td class="yes">Yes</td>
+            <td class="yes">Both</td>
+            <td class="no">No</td>
             <td><a class="link" href="https://iclr.cc/virtual/2025/poster/30919">ICLR</a></td>
         </tr>
 
@@ -1164,8 +1211,8 @@
             <td class="citations">0+</td>
             <td class="technique">Residual-trace attack</td>
             <td>Shows traces remain after approximate unlearning; reconstructs forgotten info</td>
-            <td class="yes">Yes</td>
-            <td class="yes">Yes</td>
+            <td class="yes">Both</td>
+            <td class="no">No</td>
             <td><a class="link" href="https://arxiv.org/abs/2507.20573">ArXiv</a></td>
         </tr>
 
@@ -1193,8 +1240,8 @@
             <td class="citations">57+</td>
             <td class="technique">Clean-label poisoning</td>
             <td>Reveals new attack surface where unlearning triggers model collapse</td>
-            <td class="yes">Yes</td>
-            <td class="yes">Yes</td>
+            <td class="yes">Both</td>
+            <td class="no">No</td>
             <td><a class="link"
                     href="https://proceedings.neurips.cc/paper_files/paper/2023/file/8b4add8b0aa8749d80a34ca5d941c355-Paper-Conference.pdf">NeurIPS</a>
             </td>
@@ -1210,8 +1257,8 @@
             <td class="citations">17+</td>
             <td class="technique">Differencing attack</td>
             <td>Shows exact reconstruction is possible in some settings; warns for CNN pipelines</td>
-            <td class="yes">Yes</td>
-            <td class="yes">Yes</td>
+            <td class="yes">Both</td>
+            <td class="no">No</td>
             <td><a class="link"
                     href="https://proceedings.neurips.cc/paper_files/paper/2024/hash/bd996108ed57d388866ca6deb7acf6cb-Abstract-Conference.html">NeurIPS</a>
             </td>
@@ -1298,8 +1345,8 @@
             <td class="citations">0+</td>
             <td class="technique">Attack suite</td>
             <td>Comprehensive attacks exposing failure modes of CNN unlearning methods</td>
-            <td class="yes">Yes</td>
-            <td class="yes">Yes</td>
+            <td class="yes">Both</td>
+            <td class="no">No</td>
             <td><a class="link" href="https://icml.cc/virtual/2025/poster/44738">ICML</a></td>
         </tr>
 
@@ -1358,8 +1405,8 @@
             <td class="citations">26+</td>
             <td class="technique">Negative result (poison)</td>
             <td>Shows several unlearning methods fail under poisoning; urges stronger protocols</td>
-            <td class="yes">Yes</td>
-            <td class="yes">Yes</td>
+            <td class="yes">Both</td>
+            <td class="no">No</td>
             <td><a class="link"
                     href="https://proceedings.iclr.cc/paper_files/paper/2025/file/7e810b2c75d69be186cadd2fe3febeab-Paper-Conference.pdf">PDF</a>
             </td>
