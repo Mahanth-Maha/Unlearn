@@ -1,0 +1,91 @@
+\documentclass{beamer}
+
+\usetheme[progressbar=frametitle]{metropolis}
+\usecolortheme{dove}
+
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{biblatex}
+\bibliography{references}
+
+
+\title{Unlearning in Deep Computer Vision Models}
+\subtitle{{\bf Introduction to Unlearning - Part 01}\\ \small {Course: DS 363 -- Topics in Visual Analytics}  }
+
+% \author{Yalla Mahanth \hfill{} \includegraphics[height=2cm]{iisc_logo.png}}
+
+\author{
+    \vspace{15pt}
+    Yalla Mahanth
+}
+\institute{M.Tech AI, IISc Bangalore}
+\date{\today}
+
+% \titlegraphic{\includegraphics[height=2.5cm]{iisc_logo.png}}
+
+\titlegraphic{
+    \begin{tikzpicture}[remember picture,overlay]
+        \node[anchor=south east, xshift=-1.5cm, yshift=1.45cm] at (current page.south east) 
+        {\includegraphics[height=2.25cm]{iisc_logo.png}};
+    \end{tikzpicture}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}{Outline}
+	\tableofcontents[hideallsubsections]
+\end{frame}
+
+
+
+
+
+
+
+\section{A}
+\section{B}
+\section{C}
+\section{D}
+
+
+
+
+
+
+\begin{frame}[allowframebreaks]{References}
+	\begingroup
+	\tiny
+	\printbibliography
+	\endgroup
+\end{frame}
+
+% Thank You Slide
+\begin{frame}{Thank You}
+	\centering
+	\only<1>{\Huge Any Questions ?
+		\vfill{}
+		\begin{center}
+			\vspace{0.2cm}
+			\Large \textit{“Forgetting is a form of freedom.”}
+			\begin{flushright}
+				\small — Kahlil Gibran
+			\end{flushright}
+		\end{center}
+	}
+	\only<2>{\includegraphics[width=0.5\linewidth]{questions.png}}
+	\only<3>{
+		\small Yalla Mahanth \\
+		\small M.Tech AI, IISc Bangalore \\
+		\vfill{}
+		\begin{center}
+			\textit{“The art of forgetting is a key to embracing the future.”}
+		\end{center}
+	}
+\end{frame}
+
+
+\end{document}
